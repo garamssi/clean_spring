@@ -27,19 +27,17 @@ class MemberTest {
 			}
 		};
 
-		member = Member.create("test@test", "test", "secret", passwordEncoder);
+		member = Member.create(new MemberCreateRequest("test@test", "test", "secret"), passwordEncoder);
 	}
 
 	@Test
 	void createMember() {
-		var member = Member.create("test@test.com", "test", "secret", passwordEncoder);
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
 	}
 
 	@Test
 	void activate() {
-	    var member = Member.create("test@test.com", "test", "secret", passwordEncoder);
 		member.activate();
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
@@ -47,7 +45,6 @@ class MemberTest {
 
 	@Test
 	void activateFail() {
-		var member = Member.create("test@test.com", "test", "secret", passwordEncoder);
 		member.activate();
 
 		assertThatThrownBy(() -> member.activate())
@@ -56,7 +53,6 @@ class MemberTest {
 
 	@Test
 	void deactivate() {
-		var member = Member.create("test@test.com", "test", "secret", passwordEncoder);
 		member.activate();
 
 		member.deactivate();
@@ -67,7 +63,6 @@ class MemberTest {
 
 	@Test
 	void deactivateFail() {
-		var member = Member.create("test@test.com", "test", "secret", passwordEncoder);
 
 		assertThatThrownBy(member::deactivate)
 			.isInstanceOf(IllegalStateException.class);
@@ -99,6 +94,27 @@ class MemberTest {
 		member.changePassword("newSecret", passwordEncoder);
 
 		assertThat(member.verifyPassword("newSecret", passwordEncoder)).isTrue();
+	}
+
+	@Test
+	void isActive() {
+		assertThat(member.isActive()).isFalse();
+
+		member.activate();
+
+		assertThat(member.isActive()).isTrue();
+
+		member.deactivate();
+
+		assertThat(member.isActive()).isFalse();
+	}
+
+	@Test
+	void isValidEmail() {
+		assertThatThrownBy(() -> Member.create(new MemberCreateRequest("invalid-email", "test", "secret"), passwordEncoder))
+			.isInstanceOf(IllegalArgumentException.class);
+
+		Member.create(new MemberCreateRequest("test@test", "test", "secret"), passwordEncoder);
 	}
 
 }

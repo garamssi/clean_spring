@@ -2,8 +2,6 @@ package tobyspring.splearn.domain;
 
 import static java.util.Objects.*;
 
-import java.util.regex.Pattern;
-
 import org.springframework.util.Assert;
 
 import lombok.Getter;
@@ -22,12 +20,12 @@ public class Member {
 
 	private Member(){}
 
-	public static Member create(MemberCreateRequest createRequest, PasswordEncoder passwordEncoder) {
+	public static Member register(MemberRegisterRequest registerRequest, PasswordEncoder passwordEncoder) {
 		Member member = new Member();
 
-		member.email = new Email(createRequest.email());
-		member.nickname = requireNonNull(createRequest.nickname());
-		member.passwordHash = passwordEncoder.encode(requireNonNull(createRequest.password()));
+		member.email = new Email(registerRequest.email());
+		member.nickname = requireNonNull(registerRequest.nickname());
+		member.passwordHash = passwordEncoder.encode(requireNonNull(registerRequest.password()));
 
 		member.status = MemberStatus.PENDING;
 

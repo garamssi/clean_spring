@@ -2,6 +2,7 @@ package tobyspring.splearn.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
 import tobyspring.splearn.application.provided.MemberRegister;
@@ -15,6 +16,7 @@ import tobyspring.splearn.domain.PasswordEncoder;
 
 @Service
 @Transactional
+@Validated
 @RequiredArgsConstructor
 public class MemberService implements MemberRegister {
 

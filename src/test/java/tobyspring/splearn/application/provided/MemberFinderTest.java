@@ -1,0 +1,39 @@
+package tobyspring.splearn.application.provided;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import tobyspring.splearn.SplearnTestConfiguration;
+import tobyspring.splearn.domain.Member;
+import tobyspring.splearn.domain.MemberFixture;
+
+@SpringBootTest
+@Transactional
+@Import(SplearnTestConfiguration.class)
+record MemberFinderTest(MemberFinder memberFinder, MemberRegister memberRegister, EntityManager entityManager)  {
+
+	@Test
+	void find() {
+		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+
+		entityManager.flush();
+		entityManager.clear();
+
+		Member found = memberFinder.find(member.getId());
+
+		assertThat(member.getId()).isEqualTo(found.getId());
+	}
+
+	@Test
+	void findFail() {
+		assertThatThrownBy(() -> memberFinder.find(9999L))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+}

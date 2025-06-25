@@ -6,6 +6,8 @@ import static tobyspring.splearn.domain.MemberFixture.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 
 import jakarta.persistence.EntityManager;
 import tobyspring.splearn.domain.Member;
@@ -32,5 +34,15 @@ class MemberRepositoryTest {
 		entityManager.flush();
 	}
 
+	@Test
+	void duplicateEmailFail() {
+		Member member = Member.register(createMemberRegisterRequest(), createPasswordEncoder());
+
+		memberRepository.save(member);
+
+		Member member2 = Member.register(createMemberRegisterRequest(), createPasswordEncoder());
+		assertThatThrownBy(() -> memberRepository.save(member2))
+			.isInstanceOf(DataIntegrityViolationException.class);
+	}
 
 }

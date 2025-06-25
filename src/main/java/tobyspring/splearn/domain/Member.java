@@ -2,6 +2,8 @@ package tobyspring.splearn.domain;
 
 import static java.util.Objects.*;
 
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.util.Assert;
 
 import jakarta.persistence.Embedded;
@@ -19,11 +21,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NaturalIdCache
 public class Member {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Embedded
+	@NaturalId // hibernate에서 자연 키로 사용
 	private Email email;
 
 	private String nickname;

@@ -1,9 +1,8 @@
 package tobyspring.splearn.domain;
 
+import java.util.regex.Pattern;
 
 import jakarta.persistence.Embeddable;
-
-import java.util.regex.Pattern;
 
 
 @Embeddable

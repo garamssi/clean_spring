@@ -19,7 +19,7 @@ import tobyspring.splearn.domain.MemberStatus;
 @SpringBootTest
 @Transactional
 @Import(SplearnTestConfiguration.class)
-public record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityManager) {
+record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityManager) {
 
 	@Test
 	void register() {
@@ -31,7 +31,7 @@ public record MemberRegisterTest(MemberRegister memberRegister, EntityManager en
 
 	@Test
 	void duplicateEmailFail() {
-		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+		memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
 		assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
 			.isInstanceOf(DuplicateEmailException.class);
@@ -52,13 +52,13 @@ public record MemberRegisterTest(MemberRegister memberRegister, EntityManager en
 
 	@Test
 	void memberResisterRequestFail() {
-		extracted(new MemberRegisterRequest("test@test.com", "test", "1234567111"));
-		extracted(new MemberRegisterRequest("tt", "test123", "1234567111"));
-		extracted(new MemberRegisterRequest("test@test.com", "test123", "1"));
+		checkValidation(new MemberRegisterRequest("test@test.com", "test", "1234567111"));
+		checkValidation(new MemberRegisterRequest("tt", "test123", "1234567111"));
+		checkValidation(new MemberRegisterRequest("test@test.com", "test123", "1"));
 
 	}
 
-	private void extracted(MemberRegisterRequest invalid) {
+	private void checkValidation(MemberRegisterRequest invalid) {
 		assertThatThrownBy(() -> memberRegister.register(invalid))
 			.isInstanceOf(ConstraintViolationException.class);
 	}

@@ -1,11 +1,13 @@
 package tobyspring.splearn.adapter.integration;
 
+import org.springframework.context.annotation.Fallback;
 import org.springframework.stereotype.Component;
 
 import tobyspring.splearn.application.required.EmailSender;
 import tobyspring.splearn.domain.Email;
 
 @Component
+@Fallback // 다른 빈을 다 찾다가 이 빈을 찾게 되면 이 빈을 사용한다는 의미
 public class DummyEmailSender implements EmailSender {
 
 	@Override

@@ -4,8 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.repository.Repository;
 
-import com.fasterxml.jackson.databind.introspect.AnnotationCollector;
-
 import tobyspring.splearn.domain.Email;
 import tobyspring.splearn.domain.Member;
 

@@ -2,3 +2,5 @@ spring:
   application.name: splearn
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: update # 없으면 만들고 기존에 있으면 건드리지 않음

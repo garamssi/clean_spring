@@ -1,10 +1,6 @@
-package tobyspring.splearn.domain;
+package tobyspring.splearn.domain.shared;
 
 import java.util.regex.Pattern;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 
 public record Email(String address) {
 

@@ -1,4 +1,4 @@
-// package tobyspring.splearn.application.provided;
+// package tobyspring.splearn.application.member.provided;
 //
 // import static org.assertj.core.api.Assertions.*;
 // import static org.mockito.ArgumentMatchers.*;
@@ -12,12 +12,12 @@
 // import org.springframework.test.util.ReflectionTestUtils;
 //
 // import tobyspring.splearn.application.MemberService;
-// import tobyspring.splearn.application.required.EmailSender;
-// import tobyspring.splearn.application.required.MemberRepository;
-// import tobyspring.splearn.domain.Email;
-// import tobyspring.splearn.domain.Member;
-// import tobyspring.splearn.domain.MemberFixture;
-// import tobyspring.splearn.domain.MemberStatus;
+// import tobyspring.splearn.application.member.EmailSender;
+// import tobyspring.splearn.application.member.provided.MemberRepository;
+// import tobyspring.splearn.domain.shared.Email;
+// import tobyspring.splearn.domain.member.Member;
+// import tobyspring.splearn.domain.member.MemberFixture;
+// import tobyspring.splearn.domain.member.MemberStatus;
 //
 // class MemberRegisterManualTest {
 //

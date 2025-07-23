@@ -10,6 +10,9 @@ import tobyspring.splearn.application.member.required.MemberRegister;
 import tobyspring.splearn.application.member.required.EmailSender;
 import tobyspring.splearn.application.member.provided.MemberRepository;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
+import tobyspring.splearn.domain.member.DuplicateProfileException;
+import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
+import tobyspring.splearn.domain.member.Profile;
 import tobyspring.splearn.domain.shared.Email;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberRegisterRequest;
@@ -28,16 +31,12 @@ public class MemberModifyService implements MemberRegister {
 
 	@Override
 	public Member register(MemberRegisterRequest registerRequest) {
-		// check
 		checkDuplicateEmail(registerRequest);
 
-		// domain model
 		Member member = Member.register(registerRequest, passwordEncoder);
 
-		// repository
 		memberRepository.save(member);
 
-		// post process
 		sendWelcomeEmail(member);
 
 		return member;
@@ -52,13 +51,44 @@ public class MemberModifyService implements MemberRegister {
 		return memberRepository.save(member);
 	}
 
+	@Override
+	public Member deactivate(Long memberId) {
+		Member member = memberFinder.find(memberId);
+
+		member.deactivate();
+
+		return memberRepository.save(member);
+	}
+
+	@Override
+	public Member updateInfo(Long memberId, MemberInfoUpdateRequest memberInfoUpdateRequest) {
+		Member member = memberFinder.find(memberId);
+
+		checkDuplicateProfile(member, memberInfoUpdateRequest.profileAddress());
+
+		member.updateInfo(memberInfoUpdateRequest);
+
+		return memberRepository.save(member);
+	}
+
+	private void checkDuplicateProfile(Member member, String profileAddress) {
+		if (profileAddress.isEmpty()) return;
+
+		Profile currentProfile = member.getDetail().getProfile();
+		if (currentProfile != null && currentProfile.address().equals(profileAddress)) return;
+
+		if (memberRepository.findByProfile(new Profile(profileAddress)).isPresent()) {
+			throw new DuplicateProfileException("이미 존재하는 프로필 주소입니다: " + profileAddress);
+		}
+	}
+
 	private void sendWelcomeEmail(Member member) {
-		emailSender.send(member.getEmail(), "등록을 완료해주세요.", "아래 링크를 클릭해서 등록을 완료햐주세요.");
+		emailSender.send(member.getEmail(), "등록을 완료해주세요", "아래 링크를 클릭해서 등록을 완료해주세요");
 	}
 
 	private void checkDuplicateEmail(MemberRegisterRequest registerRequest) {
-		if (memberRepository.findByEmail(new Email((registerRequest.email()))).isPresent()) {
-			throw new DuplicateEmailException("이미 등록된 이메일입니다: " + registerRequest.email());
+		if (memberRepository.findByEmail(new Email(registerRequest.email())).isPresent()) {
+			throw new DuplicateEmailException("이미 사용중인 이메일입니다: " + registerRequest.email());
 		}
 	}
 }

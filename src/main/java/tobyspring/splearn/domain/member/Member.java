@@ -7,10 +7,7 @@ import java.util.Objects;
 
 import org.hibernate.annotations.NaturalId;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +20,7 @@ import tobyspring.splearn.domain.shared.Email;
 @ToString(callSuper = true, exclude = "detail")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends AbstractEntity {
-
-	@NaturalId // hibernate에서 자연 키로 사용
+	@NaturalId
 	private Email email;
 
 	private String nickname;
@@ -33,15 +29,14 @@ public class Member extends AbstractEntity {
 
 	private MemberStatus status;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MemberDetail detail;
 
-	public static Member register(MemberRegisterRequest registerRequest, PasswordEncoder passwordEncoder) {
+	public static Member register(MemberRegisterRequest createRequest, PasswordEncoder passwordEncoder) {
 		Member member = new Member();
 
-		member.email = new Email(registerRequest.email());
-		member.nickname = requireNonNull(registerRequest.nickname());
-		member.passwordHash = passwordEncoder.encode(requireNonNull(registerRequest.password()));
+		member.email = new Email(createRequest.email());
+		member.nickname = requireNonNull(createRequest.nickname());
+		member.passwordHash = requireNonNull(passwordEncoder.encode(createRequest.password()));
 
 		member.status = MemberStatus.PENDING;
 
@@ -51,26 +46,21 @@ public class Member extends AbstractEntity {
 	}
 
 	public void activate() {
-		// if (status != MemberStatus.PENDING) throw new IllegalStateException("PENDING 상태가 아닙니다.");
-		state(status == MemberStatus.PENDING, "PENDING 상태가 아닙니다.");
+		state(status == MemberStatus.PENDING, "PENDING 상태가 아닙니다");
 
 		this.status = MemberStatus.ACTIVE;
 		this.detail.activate();
 	}
 
 	public void deactivate() {
-		state(status == MemberStatus.ACTIVE, "ACTIVE 상태가 아닙니다.");
+		state(status == MemberStatus.ACTIVE, "ACTIVE 상태가 아닙니다");
 
 		this.status = MemberStatus.DEACTIVATED;
 		this.detail.deactivate();
 	}
 
 	public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
-		return passwordEncoder.matches(password, passwordHash);
-	}
-
-	public void changeNickname(String nickname) {
-		this.nickname = requireNonNull(nickname);
+		return passwordEncoder.matches(password, this.passwordHash);
 	}
 
 	public void updateInfo(MemberInfoUpdateRequest updateRequest) {
@@ -86,6 +76,6 @@ public class Member extends AbstractEntity {
 	}
 
 	public boolean isActive() {
-		return status == MemberStatus.ACTIVE;
+		return this.status == MemberStatus.ACTIVE;
 	}
 }

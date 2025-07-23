@@ -3,10 +3,8 @@ package tobyspring.splearn.domain.member;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.util.Assert;
 
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,9 +16,7 @@ import tobyspring.splearn.domain.AbstractEntity;
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@NaturalIdCache
 public class MemberDetail extends AbstractEntity {
-	@Embedded
 	private Profile profile;
 
 	private String introduction;
@@ -38,12 +34,14 @@ public class MemberDetail extends AbstractEntity {
 	}
 
 	void activate() {
-		Assert.state(activatedAt == null, "이미 activatedAt은 설정되었습니다");
+		Assert.isTrue(activatedAt == null, "이미 activatedAt은 설정되었습니다");
+
 		this.activatedAt = LocalDateTime.now();
 	}
 
 	void deactivate() {
-		Assert.state(deactivatedAt == null, "이미 deactivatedAt은 설정되었습니다");
+		Assert.isTrue(deactivatedAt == null, "이미 deactivatedAt은 설정되었습니다");
+
 		this.deactivatedAt = LocalDateTime.now();
 	}
 

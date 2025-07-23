@@ -2,8 +2,10 @@ package tobyspring.splearn.application.member.provided;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
+import tobyspring.splearn.domain.member.Profile;
 import tobyspring.splearn.domain.shared.Email;
 import tobyspring.splearn.domain.member.Member;
 
@@ -16,4 +18,7 @@ public interface MemberRepository extends Repository<Member, Long> {
 	Optional<Member> findByEmail(Email email);
 
 	Optional<Member> findById(Long memberId);
+
+	@Query("select m from Member m where m.detail.profile = :profile")
+	Optional<Member> findByProfile(Profile profile);
 }

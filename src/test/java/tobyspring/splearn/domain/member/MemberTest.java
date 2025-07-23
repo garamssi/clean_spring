@@ -77,15 +77,6 @@ class MemberTest {
 	}
 
 	@Test
-	void changeNickname() {
-		assertThat(member.getNickname()).isEqualTo("bravojay");
-
-		member.changeNickname("newNickname");
-
-		assertThat(member.getNickname()).isEqualTo("newNickname");
-	}
-
-	@Test
 	void changePassword() {
 		member.changePassword("newSecret", passwordEncoder);
 
